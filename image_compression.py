@@ -277,4 +277,4 @@ class Image:
 
 image = Image()
 image.huffmanCode("download.bmp", "./compressed.bin",
-                  "output.jpg", toCheck=1)
+                  "download_compressed.bmp", toCheck=1)
