@@ -5,7 +5,9 @@
 #include <string>
 #include <vector>
 #include <bitset>
+
 using namespace std;
+
 // BinaryTree Node
 class BinaryTree {
 public:
@@ -26,11 +28,11 @@ class HuffmanCode {
 private:
     string path;
     priority_queue<BinaryTree*, vector<BinaryTree*>, greater<>> minHeap;
-   unordered_map<char, string> huffmanCode;
+    unordered_map<char, string> huffmanCode;
     unordered_map<string, char> reverseHuffmanCode;
 
     unordered_map<char, int> frequencyFromText(const string& text) {
-       unordered_map<char, int> frequencyMap;
+        unordered_map<char, int> frequencyMap;
         for (char ch : text) {
             frequencyMap[ch]++;
         }
@@ -38,12 +40,12 @@ private:
     }
 
     void buildHeap(const unordered_map<char, int>& frequencyMap) {
-    for (const auto& pair : frequencyMap) {
-        char key = pair.first;
-        int frequency = pair.second;
-        minHeap.push(new BinaryTree(key, frequency));
+        for (const auto& pair : frequencyMap) {
+            char key = pair.first;
+            int frequency = pair.second;
+            minHeap.push(new BinaryTree(key, frequency));
+        }
     }
-}
 
     BinaryTree* buildBinaryTree() {
         while (minHeap.size() > 1) {
@@ -83,14 +85,14 @@ private:
 
     string buildPaddedText(const string& encodedText) {
         int paddingValue = 8 - (encodedText.length() % 8);
-       string paddedInfo = bitset<8>(paddingValue).to_string();
-       string paddedText = paddedInfo + encodedText;
+        string paddedInfo = bitset<8>(paddingValue).to_string();
+        string paddedText = paddedInfo + encodedText;
         paddedText.append(paddingValue, '0');
         return paddedText;
     }
 
     vector<unsigned char> buildByteArray(const string& paddedText) {
-       vector<unsigned char> byteArray;
+        vector<unsigned char> byteArray;
         for (size_t i = 0; i < paddedText.length(); i += 8) {
             string byteString = paddedText.substr(i, 8);
             byteArray.push_back(static_cast<unsigned char>(bitset<8>(byteString).to_ulong()));
@@ -99,7 +101,7 @@ private:
     }
 
     string removePadding(const string& text) {
-       string paddedInfo = text.substr(0, 8);
+        string paddedInfo = text.substr(0, 8);
         int extraPadding = bitset<8>(paddedInfo).to_ulong();
         return text.substr(8, text.length() - 8 - extraPadding);
     }
@@ -121,7 +123,7 @@ public:
     HuffmanCode(const std::string& filePath) : path(filePath) {}
 
     string compress() {
-       ifstream file(path);
+        ifstream file(path);
         if (!file.is_open()) {
             cerr << "Failed to open file: " << path << endl;
             return "";
@@ -138,7 +140,7 @@ public:
         string paddedText = buildPaddedText(encodedText);
         vector<unsigned char> byteArray = buildByteArray(paddedText);
 
-        string outputPath = path.substr(0, path.find_last_of('.')) + ".bin";
+        string outputPath = path.substr(0, path.find_last_of('.')) + "_compressed.txt";
         ofstream output(outputPath, ios::binary);
         output.write(reinterpret_cast<char*>(byteArray.data()), byteArray.size());
         output.close();
@@ -147,11 +149,11 @@ public:
         return outputPath;
     }
 
-    void decompress(const string& inputPath) {
+    string decompress(const string& inputPath) {
         ifstream file(inputPath, ios::binary);
         if (!file.is_open()) {
             cerr << "Failed to open file: " << inputPath << endl;
-            return;
+            return "";
         }
 
         string bitString;
@@ -168,20 +170,23 @@ public:
         ofstream output(outputPath);
         output << decompressedText;
         output.close();
-         cout<<"Decompressed successfully"<<std::endl;
+         
+        cout << "Decompressed successfully" << endl;
+        return outputPath;
     }
 };
 
 int main() {
-    string path;
-    cout << "ENTER THE PATH OF YOUR FILE....";
-    cin >> path;
-
+   string path;
+   cout<<"Enter path for file (must be in .txt format): ";
+   cin>>path;
     HuffmanCode huffman(path);
     string outputPath = huffman.compress();
-    huffman.decompress(outputPath);
 
+    string decompressedPath=huffman.decompress(outputPath);
     return 0;
 }
+
+
 
 

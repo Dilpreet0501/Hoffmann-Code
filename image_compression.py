@@ -237,7 +237,7 @@ class Image:
         out = out.astype(dtype=int)
         self.out = out
 
-    def huffmanCode(self, input_pth, compressed_pth="./compressed.bin", output_pth="output.jpg", toCheck=0):
+    def huffmanCode(self, input_pth, compressed_pth, output_pth, toCheck):
         # Just Steps for Execution
 
         import time
